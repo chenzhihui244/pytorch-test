@@ -1,0 +1,4 @@
+---
+# defaults file for pytorch
+
+pytorch_path: "{{ topdir }}/pytorch"

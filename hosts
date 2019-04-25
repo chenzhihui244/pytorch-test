@@ -1,0 +1,6 @@
+[all:vars]
+topdir=/home/pytorch
+pytorch_git=http://github.com/pytorch/pytorch
+
+[target]
+192.168.1.205

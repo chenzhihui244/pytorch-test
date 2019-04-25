@@ -1,0 +1,46 @@
+---
+# tasks file for pytorch
+
+- name: ensure pytorch dir present
+  file:
+    state: directory
+    path: "{{ pytorch_path }}"
+
+- name: install dependencies
+  yum:
+    state: present
+    name: ['gcc', 'gcc-c++', 'git', 'cmake3', 'python', 'python-devel', 'python-pip']
+  when: (ansible_distribution == "CentOS")
+
+- name: setup cmake link
+  file:
+    state: link
+    src: /usr/bin/cmake3
+    dest: /usr/bin/cmake
+
+- name: upgrade pip
+  pip:
+    state: latest
+    name: ['pip']
+
+- name: install python denpendencies
+  pip:
+    state: present
+    name: ['setuptools', 'pyyaml', 'typing']
+
+- name: download pytorch source code
+  git:
+    repo: "{{ pytorch_git }}"
+    dest: "{{ pytorch_path }}/pytorch"
+    track_submodules: yes
+    update: no
+
+- name: install required python package
+  pip:
+    state: present
+    requirements: "{{ pytorch_path }}/pytorch/requirements.txt"
+
+- name: build pytorch
+  shell: git clean -xdf && python setup.py build && python setup.py install
+  args:
+    chdir: "{{ pytorch_path }}/pytorch/"
